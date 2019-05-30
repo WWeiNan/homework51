@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.UserDao">
+    <!--用户注册-->
+    <insert id="regist">
+        insert into user values (#{username},#{password},#{phone},#{email},#{emailIp},#{systemSource},#{userStatus})
+    </insert>
+    <!--用户登录-->
+    <select id="userLogin" resultType="user">
+        select username,password,phone,email,emailIp,systemSource,userStatus from user where username=#{username}and password=#{password}
+    </select>
+    <!--查询总的用户数量-->
+    <select id="findTotalCount" resultType="Integer">
+        select count(*) from user
+    </select>
+    <!--分页查询所有的用户-->
+    <select id="queryAllUser" resultType="user">
+        select username,password,phone,email,emailIp,systemSource,userStatus from  user limit #{index} ,#{count}
+    </select>
+    <!--根据用户名删除-->
+    <delete id="delUser">
+        delete from user where username=#{username}
+    </delete>
+    <!--修改用户状态-->
+    <update id="changeUserStatus">
+        update user
+            <set>
+                <if test="userStatus=='激活'">
+                    userStatus='冻结'
+                </if>
+                <if test="userStatus=='冻结'">
+                    userStatus='激活'
+                </if>
+            </set>
+        where username=#{username}
+    </update>
+    <!--根据用户名查询用户-->
+    <select id="selectByUsername" resultType="user">
+        select username,password,phone,email,emailIp,systemSource,userStatus from user where username=#{username}
+    </select>
+    <!--修改用户信息-->
+    <update id="updateUser">
+        update user
+            <set>
+                <if test="phone !=null">
+                    phone=#{phone},
+                </if>
+                <if test="email !=null">
+                    email=#{email}
+                </if>
+            </set>
+            where username=#{username}
+    </update>
+    <!--模糊查询用户信息-->
+    <select id="findLikeUsername" resultType="user">
+        select username,password,phone,email,emailIp,systemSource,userStatus from user  where username like concat( concat('%',#{username}),'%');
+    </select>
+    <!--模糊查询分页-->
+    <select id="queryLike" resultType="user">
+        select username,password,phone,email,emailIp,systemSource,userStatus from user  where username like '%' #{username} '%' limit #{index} ,#{count};
+    </select>
+</mapper>
